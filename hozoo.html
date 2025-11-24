@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>WA Bug Sender</title>
+  <style>
+    body { font-family: sans-serif; background: #121212; color: white; padding: 30px; text-align: center; }
+    input, select, button {
+      padding: 10px;
+      font-size: 16px;
+      margin: 10px;
+      width: 300px;
+    }
+    #result {
+      margin-top: 20px;
+      color: #0f0;
+    }
+  </style>
+</head>
+<body>
+  <h1>WA Bug Sender (via Server)</h1>
+
+  <input type="text" id="number" placeholder="Nomor WA (628xxxx)">
+  <br>
+  <select id="type">
+    <option value="crashwa">CrashWA</option>
+    <option value="invisdelay">InvisDelay</option>
+    <option value="fcreyx">FC-Reyx</option>
+  </select>
+  <br>
+  <button onclick="sendBug()">Kirim Bug Sekarang</button>
+
+  <div id="result"></div>
+
+  <script>
+    async function sendBug() {
+      const number = document.getElementById('number').value.trim()
+      const type = document.getElementById('type').value
+      const resultBox = document.getElementById('result')
+
+      if (!number.startsWith('628')) {
+        resultBox.innerText = 'Nomor harus diawali 628...'
+        return
+      }
+
+      const res = await fetch('/send-bug', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ number, type })
+      })
+
+      const data = await res.json()
+      if (res.ok) {
+        resultBox.innerText = `✅ Pesan dikirim ke ${data.to} (${data.type})`
+      } else {
+        resultBox.innerText = `❌ Gagal: ${data.error}`
+      }
+    }
+  </script>
+</body>
+</html>
